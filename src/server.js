@@ -1,6 +1,7 @@
 import http from "http";
 import { WebSocketServer } from "ws";
 import express from "express";
+import { parse } from "path";
 
 const app = express();
 
@@ -16,22 +17,34 @@ const handleListen = () => console.log(`🚀 Listening on http://localhost:3000`
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
-//1. fake DB: 몇 명이 서버랑 연결되어 있는지 알아보기 위해 가짜 디비 만듦
-//누군가 이 서버에 연결하면, 그 connection을 이 배열에 넣자.
 const sockets = [];
 
 wss.on("connection", (socket) => {
   sockets.push(socket);
-  //2. 소켓츠에 연결된 커넥션(크롬/브레이브...등의 소켓)을 넣어준다.
-  //이렇게 하면 받은 메시지를 다른 모든 socket들에게도 전달할 수 있다.
+  //닉네임 안정한 사람들을 위해 소켓이 연결될 때 닉네임 생성해 주자.
+  socket["nickname"] = "anonymous";
   console.log("Connected to Browser ✅");
   socket.on("close", () => {
     console.log("Disconnected from the Browser ❌");
   });
-  socket.on("message", (message) => {
-    //3. 각 브라우저는 aSocket으로 표시하고 메세지 보내기
-    //이렇게 하면 연결된 모든 socket들에 접근할 수 있다.
-    sockets.forEach((aSocket) => aSocket.send(message.toString()));
+  //소켓이 메시지를 보낼때 까지 기다리는 곳
+  socket.on("message", (msg) => {
+    //String인 msg를 받아서 JS Object형태인 msg로 바꾸기
+    const message = JSON.parse(msg);
+    switch (message.type) {
+      case "new_msg":
+        //메세지 타입이: new_msg 일때 페이로드
+        sockets.forEach((aSocket) =>
+          aSocket.send(`${socket.nickname}: ${message.payload}`)
+        );
+        break;
+      case "nickname":
+        //이제 이 payload, 즉 닉네임을 socket안에 넣어줘야 한다.
+        //소켓이 누군지 알아야 하니까!!
+        socket["nickname"] = message.payload;
+        //소켓에 새로운 item 추가하자. 소켓은 기본적으로 오브젝트(객체)라서 원하는거 더 추가할 수 있음
+        break;
+    }
   });
 });
 
