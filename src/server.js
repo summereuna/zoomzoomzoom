@@ -14,7 +14,7 @@ app.get("/*", (_, res) => res.redirect("/"));
 const handleListen = () => console.log(`✅ Listening on http://localhost:3000`);
 
 const server = http.createServer(app);
-//백엔드에 websocket server 만듦
+//백엔드에 websocket server 만들었다.
 const wss = new WebSocketServer({ server });
 
 //1. connection 이벤트 listen: 이벤트 발생하면 브라우저와 연결됐다고 로그 출력
