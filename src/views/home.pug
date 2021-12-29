@@ -10,12 +10,7 @@ html(lang="en")
         header 
             h1 Zoom Zoom Zoom
         main
-            form#nickname
-                input(type="text", placeholder="Choose a nickname", required)
-                button Save
-            ul
-            form#message
-                input(type="text", placeholder="Write a message", required)
-                button Send
+            
         footer &copy; #{new Date().getFullYear()} ZZZ
+        script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js")

@@ -1,7 +1,7 @@
 import http from "http";
-import { WebSocketServer } from "ws";
+//import { WebSocketServer } from "ws";
+import SocketIO from "socket.io";
 import express from "express";
-import { parse } from "path";
 
 const app = express();
 
@@ -12,9 +12,17 @@ app.use("/public", express.static(__dirname + "/public"));
 app.get("/", (_, res) => res.render("home"));
 app.get("/*", (_, res) => res.redirect("/"));
 
-const handleListen = () => console.log(`🚀 Listening on http://localhost:3000`);
+const httpServer = http.createServer(app);
 
-const server = http.createServer(app);
+//SocketIO로 구축한 서버
+const wsServer = SocketIO(httpServer);
+
+wsServer.on("connection", (socket) => {
+  console.log(socket);
+});
+//이렇게 하면 백엔드에서 connection 받을 준비 완료
+
+/* WebSocket으로 구축한 서버
 const wss = new WebSocketServer({ server });
 
 const sockets = [];
@@ -47,5 +55,7 @@ wss.on("connection", (socket) => {
     }
   });
 });
+*/
 
-server.listen(3000, handleListen);
+const handleListen = () => console.log(`🚀 Listening on http://localhost:3000`);
+httpServer.listen(3000, handleListen);
