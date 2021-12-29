@@ -13,14 +13,35 @@ app.get("/", (_, res) => res.render("home"));
 app.get("/*", (_, res) => res.redirect("/"));
 
 const httpServer = http.createServer(app);
-
-//SocketIO로 구축한 서버
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
-  console.log(socket);
+  socket.onAny((event) => {
+    console.log(`Socket event: ${event}`);
+  });
+  socket.on("enter_room", (roomName, done) => {
+    //1. roomName 방에 참가
+    socket.join(roomName);
+    //2. 프론트엔드에 있는 showRoom() 실행
+    done();
+    //3. 방에 참가하면 참가했다는 것을 모든 사람에게 알려주기
+    //"welcome"이벤트를 방금 참여한 방, roomName에 있는 모든 사람들에게 emit하기
+    //이제 프론트엔드에서 이 이벤트에 반응하도록 만들면 된다.
+    socket.to(roomName).emit("welcome");
+    //4. 유저가 서버와 연결이 끊어지기 전에 굿바이 메세지 보내기
+    //유저가 disconnecting되면 모든 rooms에 forEach를 써서, 내가 참여하고 있는 방의 모든 사람들에게 종료 evnet를 보내자.
+    socket.on("disconnecting", () => {
+      socket.rooms.forEach((room) => socket.to(room).emit("bye"));
+      //socket.rooms을 콘솔에 찍어보면 Set(1)...
+      //중복되는 요소가 없는 array인 Set이 뜬다.
+      //그래서 forEach를 쓸 수 있는 거다.
+      //여기에는 참여하고 있는 방의 ID와 방의 이름을 볼 수 있다.
+    });
+  });
 });
-//이렇게 하면 백엔드에서 connection 받을 준비 완료
+
+const handleListen = () => console.log(`🚀 Listening on http://localhost:3000`);
+httpServer.listen(3000, handleListen);
 
 /* WebSocket으로 구축한 서버
 const wss = new WebSocketServer({ server });
@@ -56,6 +77,3 @@ wss.on("connection", (socket) => {
   });
 });
 */
-
-const handleListen = () => console.log(`🚀 Listening on http://localhost:3000`);
-httpServer.listen(3000, handleListen);

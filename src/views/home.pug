@@ -10,7 +10,16 @@ html(lang="en")
         header 
             h1 Zoom Zoom Zoom
         main
-            
+            div#welcome
+                form
+                    input(type="text", placeholder="Room Name", required)
+                    button Enter Room
+            div#room
+                h3
+                ul
+                form
+                    input(type="text", placeholder="Write a message", required)
+                    button Send
         footer &copy; #{new Date().getFullYear()} ZZZ
         script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js")
