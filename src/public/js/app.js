@@ -8,18 +8,22 @@ room.hidden = true;
 
 let roomName;
 
-//handleMessageSubmit함수
 function handleMessageSubmit(event) {
   event.preventDefault();
-  const input = room.querySelector("input");
+  //쿼리셀렉터는 첫번째꺼 가져오니까 #msg Form 안에 input 가져오도록 수정
+  const input = room.querySelector("#msg input");
   const value = input.value;
-  //백엔드로 메세지 보내는 new_message 이벤트
-  //❗️인자로 방 이름도 같이 보내주자.
-  //cb fn으로는 addMessage 함수 호출하는 함수 만들기
   socket.emit("new_message", value, roomName, () => {
     addMessage(`You: ${value}`);
   });
   input.value = "";
+}
+
+function handleNicknameSubmit(event) {
+  event.preventDefault();
+  const input = room.querySelector("#nickname input");
+  //input.value를 백엔드에 보내줬음, 이제 백엔드에 handler 만들어줘야함!
+  socket.emit("nickname", input.value);
 }
 
 function addMessage(message) {
@@ -34,9 +38,12 @@ function showRoom() {
   room.hidden = false;
   const h3 = document.querySelector("h3");
   h3.innerText = `Room: ${roomName}`;
-  //1. form 찾아서 submit이벤트 추가하기
-  const msgForm = room.querySelector("form");
+  //msgForm 아이디 넣어서 가져오기
+  const msgForm = room.querySelector("#msg");
+  //#name form 가져오기
+  const nicknameForm = room.querySelector("#nickname");
   msgForm.addEventListener("submit", handleMessageSubmit);
+  nicknameForm.addEventListener("submit", handleNicknameSubmit);
 }
 
 function handleRoomSubmit(event) {
@@ -50,13 +57,15 @@ function handleRoomSubmit(event) {
 form.addEventListener("submit", handleRoomSubmit);
 
 //welcome 이벤트랑 연결중이면, 펑션 실행
-socket.on("welcome", () => {
-  addMessage(`Someone joined ${roomName}!`);
+//1. 백엔드에서 보낸 socket.nickname 사용하기 위해 user로 인자 받아오기
+socket.on("welcome", (user) => {
+  addMessage(`${user} joined room: ${roomName}!`);
 });
 
 //bye 이벤트
-socket.on("bye", () => {
-  addMessage(`Someone left ${roomName}!`);
+//2. 백엔드에서 보낸 socket.nickname 사용하기 위해 user로 인자 받아오기
+socket.on("bye", (user) => {
+  addMessage(`${user} left room: ${roomName}!`);
 });
 
 //백엔드에서 new_message 이벤트 받기

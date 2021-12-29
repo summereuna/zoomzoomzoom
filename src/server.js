@@ -16,22 +16,32 @@ const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
+  //2. socket에 연결되면 소켓에 Anonymous 닉네임 넣어주기
+  socket["nickname"] = "Anonymous";
   socket.onAny((event) => {
     console.log(`Socket event: ${event}`);
   });
   socket.on("enter_room", (roomName, done) => {
     socket.join(roomName);
     done();
-    socket.to(roomName).emit("welcome");
+    //3-2. 닉네임도 같이보내서 ~가 방에 입장했다고 알려주기
+    socket.to(roomName).emit("welcome", socket.nickname);
     socket.on("disconnecting", () => {
-      socket.rooms.forEach((room) => socket.to(room).emit("bye"));
+      //3-3. 닉네임도 같이보내서 ~가 방에 입장했다고 알려주기
+      socket.rooms.forEach((room) =>
+        socket.to(room).emit("bye", socket.nickname)
+      );
     });
     //백엔드에서 새로운 메세지 받았을 때
     socket.on("new_message", (msg, roomName, done) => {
       //해당하는 방에 있는 모두에게(나를 제외한) 프론트엔드에서 받아온 msg 보내라
-      socket.to(roomName).emit("new_message", msg);
+      //3-1. 이때 "닉네임: 메세지"가 되도록 닉네임도 같이 보내주기
+      socket.to(roomName).emit("new_message", `${socket.nickname}: ${msg}`);
       done();
     });
+    //1. 닉네임 받는 핸들러
+    //"nickname" 이벤트가 발생하면 nickname을 가져와서 socket에 저장하기
+    socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
   });
 });
 
