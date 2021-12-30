@@ -39,6 +39,19 @@ function publicRooms() {
 }
 //wsServer.sockets.adapter로 부터 sids와 rooms을 가져와서 룸의 키=sids의 키가 일치하지 않는 키를 찾아서 퍼블릭룸 어레이에 넣어주었다.
 
+//방에 몇명 들어가 있는지 확인하는 fn
+function countUserInRoom(roomName) {
+  //가끔 roomName 못 찾을 수도 있으니까 ? 넣어주기
+  return wsServer.sockets.adapter.rooms.get(roomName)?.size;
+  /* ? 넣어주면 이런 뜻임 ㅇㅇ (Optional chaining)
+  if(wsServer.sockets.adapter.rooms.get(roomName)){
+return wsServer.sockets.adapter.rooms.get(roomName).size
+} else {
+return undefined;
+}
+*/
+}
+
 wsServer.on("connection", (socket) => {
   //2. socket에 연결되면 소켓에 Anonymous 닉네임 넣어주기
   socket["nickname"] = "Anonymous";
@@ -49,7 +62,9 @@ wsServer.on("connection", (socket) => {
     socket.join(roomName);
     done();
     //3-2. 닉네임도 같이보내서 ~가 방에 입장했다고 알려주기
-    socket.to(roomName).emit("welcome", socket.nickname);
+    socket
+      .to(roomName)
+      .emit("welcome", socket.nickname, countUserInRoom(roomName));
     //모든 소켓, 즉 모든 방에 방 새로 생겼다고 알려주기
     //"room_change"이벤트를 보내고,
     //이 이벤트의 payload로 publicRooms 함수의 결과를 보내자.
@@ -59,7 +74,7 @@ wsServer.on("connection", (socket) => {
     socket.on("disconnecting", () => {
       //3-3. 닉네임도 같이보내서 ~가 방에 입장했다고 알려주기
       socket.rooms.forEach((room) =>
-        socket.to(room).emit("bye", socket.nickname)
+        socket.to(room).emit("bye", socket.nickname, countUserInRoom(room) - 1)
       );
     });
     socket.on("disconnect", () => {

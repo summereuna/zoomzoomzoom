@@ -58,13 +58,21 @@ form.addEventListener("submit", handleRoomSubmit);
 
 //welcome 이벤트랑 연결중이면, 펑션 실행
 //1. 백엔드에서 보낸 socket.nickname 사용하기 위해 user로 인자 받아오기
-socket.on("welcome", (user) => {
+//방에 몇명인지 새롭게 계산한 수(백엔드에서 보낸 countUserInRoom(roomName))인 newCount도 받아옴
+socket.on("welcome", (user, newCount) => {
+  //타이틀에 newCount 추가하기
+  const h3 = document.querySelector("h3");
+  h3.innerText = `Room: ${roomName} (${newCount})`;
   addMessage(`${user} joined room: ${roomName}!`);
 });
 
 //bye 이벤트
 //2. 백엔드에서 보낸 socket.nickname 사용하기 위해 user로 인자 받아오기
-socket.on("bye", (user) => {
+//방에 몇명인지 새롭게 계산한 수(백엔드에서 보낸 countUserInRoom(room) - 1)인 newCount도 받아옴
+socket.on("bye", (user, newCount) => {
+  //타이틀에 newCount 추가하기
+  const h3 = document.querySelector("h3");
+  h3.innerText = `Room: ${roomName} (${newCount})`;
   addMessage(`${user} left room: ${roomName}!`);
 });
 
