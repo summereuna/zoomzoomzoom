@@ -92,13 +92,13 @@ socket.on("room_change", (rooms) => {
   //룸리스트가 비면, rooms가 없는 상태로 오면,
   //즉 앱에 room이 하나도 없으면 걍 리턴시켜서 페인팅 안되게하기.
   if (rooms.lenght === 0) {
-    roomList.innerHTML = "";
+    //roomList.innerHTML = "";
     return;
   }
   //받아온 room 배열에 forEach로 각각의 room에 li element 만들기
   rooms.forEach((room) => {
     const li = document.createElement("li");
     li.innerText = room;
-    roomList.appendChild(li);
+    roomList.append(li);
   });
 });
