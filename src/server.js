@@ -15,6 +15,30 @@ app.get("/*", (_, res) => res.redirect("/"));
 const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
+//public rooms을 주는 fn
+function publicRooms() {
+  //1. adapter 안에 있는 sids랑 rooms가져오기
+  //const sids = wsServer.sockets.adapter.sids;
+  //const sids = wsServer.sockets.adapter.rooms;
+  //ES6로 작성...^^ sockets 안으로 들어가서 adapter 안으로 들어가서 시드랑 룸 가져옴 = wsServer안에서
+  const {
+    sockets: {
+      adapter: { sids, rooms },
+    },
+  } = wsServer;
+  //2. public rooms list 만들기
+  const publicRooms = [];
+  rooms.forEach((_, key) => {
+    if (sids.get(key) === undefined) {
+      //그러면 퍼블릭룸 어레이에 키 넣어라
+      publicRooms.push(key);
+    }
+  });
+  //3. publicRooms 반환해 주기
+  return publicRooms;
+}
+//wsServer.sockets.adapter로 부터 sids와 rooms을 가져와서 룸의 키=sids의 키가 일치하지 않는 키를 찾아서 퍼블릭룸 어레이에 넣어주었다.
+
 wsServer.on("connection", (socket) => {
   //2. socket에 연결되면 소켓에 Anonymous 닉네임 넣어주기
   socket["nickname"] = "Anonymous";
@@ -26,11 +50,22 @@ wsServer.on("connection", (socket) => {
     done();
     //3-2. 닉네임도 같이보내서 ~가 방에 입장했다고 알려주기
     socket.to(roomName).emit("welcome", socket.nickname);
+    //모든 소켓, 즉 모든 방에 방 새로 생겼다고 알려주기
+    //"room_change"이벤트를 보내고,
+    //이 이벤트의 payload로 publicRooms 함수의 결과를 보내자.
+    //즉, 현재 서버 안에 있는 모든 방의 array를 payload로 보내자.
+    wsServer.sockets.emit("room_change", publicRooms());
+    //이제 프론트엔드에서 작업 고고
     socket.on("disconnecting", () => {
       //3-3. 닉네임도 같이보내서 ~가 방에 입장했다고 알려주기
       socket.rooms.forEach((room) =>
         socket.to(room).emit("bye", socket.nickname)
       );
+    });
+    socket.on("disconnect", () => {
+      //클라이언트가 종료 메세지를 방에 있는 소켓들에게 보낸 다음에,
+      //모든 소켓, 즉 모든 방에게 room이 변경됐다고 알려주자.
+      wsServer.sockets.emit("room_change", publicRooms());
     });
     //백엔드에서 새로운 메세지 받았을 때
     socket.on("new_message", (msg, roomName, done) => {

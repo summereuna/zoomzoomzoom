@@ -72,3 +72,25 @@ socket.on("bye", (user) => {
 socket.on("new_message", addMessage);
 //위 코드랑 아래 코드는 같은 거임 ㅇㅇ!
 //socket.on("new_message", (msg) => {addMessage(msg)});
+
+//백엔드에서 room_change 이벤트 받기
+//room_change 발생하면 rooms 배열을 받을 수 있다.
+//welcome의 ul을 받아서 roomList로 만들자.
+socket.on("room_change", (rooms) => {
+  const roomList = welcome.querySelector("ul");
+  //룸리스트를 항상 비워줘야함 그러면 새로운 다른 방 생길 때 기존에 있었던거랑 중복 출력 안됨
+  //항상 새로운 리스트가 되도록 꼼수를 쓰자 ^^!
+  roomList.innerHTML = "";
+  //룸리스트가 비면, rooms가 없는 상태로 오면,
+  //즉 앱에 room이 하나도 없으면 걍 리턴시켜서 페인팅 안되게하기.
+  if (rooms.lenght === 0) {
+    roomList.innerHTML = "";
+    return;
+  }
+  //받아온 room 배열에 forEach로 각각의 room에 li element 만들기
+  rooms.forEach((room) => {
+    const li = document.createElement("li");
+    li.innerText = room;
+    roomList.appendChild(li);
+  });
+});
