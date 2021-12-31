@@ -89,28 +89,28 @@ wsServer.on("connection", (socket) => {
     //즉, 현재 서버 안에 있는 모든 방의 array를 payload로 보내자.
     wsServer.sockets.emit("room_change", publicRooms());
     //이제 프론트엔드에서 작업 고고
-    socket.on("disconnecting", () => {
-      //3-3. 닉네임도 같이보내서 ~가 방에 입장했다고 알려주기
-      socket.rooms.forEach((room) =>
-        socket.to(room).emit("bye", socket.nickname, countUserInRoom(room) - 1)
-      );
-    });
-    socket.on("disconnect", () => {
-      //클라이언트가 종료 메세지를 방에 있는 소켓들에게 보낸 다음에,
-      //모든 소켓, 즉 모든 방에게 room이 변경됐다고 알려주자.
-      wsServer.sockets.emit("room_change", publicRooms());
-    });
-    //백엔드에서 새로운 메세지 받았을 때
-    socket.on("new_message", (msg, roomName, done) => {
-      //해당하는 방에 있는 모두에게(나를 제외한) 프론트엔드에서 받아온 msg 보내라
-      //3-1. 이때 "닉네임: 메세지"가 되도록 닉네임도 같이 보내주기
-      socket.to(roomName).emit("new_message", `${socket.nickname}: ${msg}`);
-      done();
-    });
-    //1. 닉네임 받는 핸들러
-    //"nickname" 이벤트가 발생하면 nickname을 가져와서 socket에 저장하기
-    socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
   });
+  socket.on("disconnecting", () => {
+    //3-3. 닉네임도 같이보내서 ~가 방에 입장했다고 알려주기
+    socket.rooms.forEach((room) =>
+      socket.to(room).emit("bye", socket.nickname, countUserInRoom(room) - 1)
+    );
+  });
+  socket.on("disconnect", () => {
+    //클라이언트가 종료 메세지를 방에 있는 소켓들에게 보낸 다음에,
+    //모든 소켓, 즉 모든 방에게 room이 변경됐다고 알려주자.
+    wsServer.sockets.emit("room_change", publicRooms());
+  });
+  //백엔드에서 새로운 메세지 받았을 때
+  socket.on("new_message", (msg, roomName, done) => {
+    //해당하는 방에 있는 모두에게(나를 제외한) 프론트엔드에서 받아온 msg 보내라
+    //3-1. 이때 "닉네임: 메세지"가 되도록 닉네임도 같이 보내주기
+    socket.to(roomName).emit("new_message", `${socket.nickname}: ${msg}`);
+    done();
+  });
+  //1. 닉네임 받는 핸들러
+  //"nickname" 이벤트가 발생하면 nickname을 가져와서 socket에 저장하기
+  socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
 });
 
 const handleListen = () => console.log(`🚀 Listening on http://localhost:3000`);
