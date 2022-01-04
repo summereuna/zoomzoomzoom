@@ -10,7 +10,10 @@ html(lang="en")
         header 
             h1 Zoom Zoom Zoom
         main
-            video#myFace(autoplay, playinlin, widht="400", height="400")
+            div#myStream
+                video#myFace(autoplay, playinlin, widht="400", height="400")
+                button#mute Mute
+                button#camera Turn Camera Off
         footer &copy; #{new Date().getFullYear()} ZZZ
         script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js")
