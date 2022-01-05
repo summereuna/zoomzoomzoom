@@ -12,8 +12,9 @@ html(lang="en")
         main
             div#myStream
                 video#myFace(autoplay, playinlin, widht="400", height="400")
-                button#mute Mute
-                button#camera Turn Camera Off
+                button#muteBtn Mute
+                button#cameraBtn Turn Camera Off
+                select#cameras
         footer &copy; #{new Date().getFullYear()} ZZZ
         script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js")
