@@ -42,6 +42,11 @@ wsServer.on("connection", (socket) => {
     //그 방에 웰컴 에밋 보내기
     socket.to(roomName).emit("welcome");
   });
+  //프론트엔드에서 Peer A가 보낸 offer 서버에서 받기
+  socket.on("offer", (offer, roomName) => {
+    //해당하는 방으로(다른 peer 들에게) offer 전달하기
+    socket.to(roomName).emit("offer", offer);
+  });
 });
 
 const handleListen = () => console.log(`🚀 Listening on http://localhost:3000`);

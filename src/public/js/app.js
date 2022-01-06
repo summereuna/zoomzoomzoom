@@ -1,21 +1,22 @@
 const socket = io();
 
+/* Video Call code */
+
 const myFace = document.getElementById("myFace");
 const muteBtn = document.getElementById("muteBtn");
 const cameraBtn = document.getElementById("cameraBtn");
 const camerasSelect = document.getElementById("cameras");
-//1.
 const call = document.getElementById("call");
 
-//2.
 call.hidden = true;
 
 //전역 변수
 let myStream;
 let muted = false;
 let cameraOff = false;
-//7. 사용자가 입력한 룸 이름을 어딘가에 저장해야 한다.
 let roomName;
+//2-1. peerConnection을 모든 곳에 다 공유하기 위해 전역변수로 만들면 된다.
+let myPeerConnection;
 
 //사용자의 카메라 장치 가져오는 함수
 async function getCamera() {
@@ -115,20 +116,22 @@ cameraBtn.addEventListener("click", handleCameraClick);
 camerasSelect.addEventListener("iput", handleCameraChange);
 
 /* Welcome Form (join a room) */
-
-//3.
 const welcome = document.getElementById("welcome");
 const welcomeForm = welcome.querySelector("form");
 
-//6. 룸에 입장하면 call div 보여주기
-function startMedia() {
+//룸에 입장하면 호출되는 startMedia
+//🔥 1. 양쪽 브라우저에서 돌아가는 코드는 바로 이 부분!!
+//양쪽 브라우저에서 방에 참가하면, 방이 비어있든 말든 상관 없이 이 코드 실행함
+async function startMedia() {
   welcome.hidden = true;
   call.hidden = false;
   //그러고 나서 getMedia 호출해서 카메라/마이크 등 불러오기
-  getMedia();
+  await getMedia();
+  //3. makeConnection 호출
+  makeConnection();
 }
 
-//5. 사용자가 입력한 roomName 서버에 넘겨주고, 서버에서 룸에 입장시킴
+//사용자가 입력한 roomName 서버에 넘겨주고, 서버에서 룸에 입장시킴
 function handleWelcomeSubmit(event) {
   event.preventDefault();
   const input = welcomeForm.querySelector("input");
@@ -141,19 +144,34 @@ function handleWelcomeSubmit(event) {
   input.value = "";
 }
 
-//4.
 welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 
-/*
-사용자가 room에 참가한 다음에 call 시작될 수 있게 하자.
-- div#welcome과 div#call을 불러온다.
-- div#call을 숨긴다.
-- welcome form 입력되면 div#welcome 숨기고 div#call 보여준다.
-*/
-
 /* Socket code */
-//다른 사람이 내 방에 들어오면 누군가 왓다고 알리기
-socket.on("welcome", () => {
-  console.log("Somebody joined");
-  //오케이 이제 peer-to-peer를 적용할 때가 왔다!
+//Peer A인 브라우저에서만 실행되는 코드: offer 생성해 setLocalDescription하고 offer 보냄
+socket.on("welcome", async () => {
+  //offer 생성
+  const offer = await myPeerConnection.createOffer();
+  //offer로 연결 구성
+  myPeerConnection.setLocalDescription(offer);
+  console.log("sent the offer");
+  // offer를 Peer B인 브라우저로 보내기 위해 offer와 roomName 서버에 보내기
+  socket.emit("offer", offer, roomName);
 });
+
+//서버에서 Peer A의 offer를 전달 받은 다른 Peer들에서 실행되는 코드: offer 받고 answer 생성하여 보냄
+socket.on("offer", (offer) => {
+  console.log(offer);
+});
+
+/* RTC code */
+//실제로 연결 만드는 함수
+function makeConnection() {
+  // 양쪽 브라우저에 peer-to-peer 연결 위해 구성
+  myPeerConnection = new RTCPeerConnection();
+  //양쪽 브라우저에서 카메라와 마이크의 데이터 stream을 받아서 그것들을 연결 안에 집어 넣음
+  //console.log(myStream.getTracks());
+  //각각의 트랙들을 myPeerConnection에 각각의 track을 addTrack(track) 해주면 된다.
+  myStream
+    .getTracks()
+    .forEach((track) => myPeerConnection.addTrack(track, myStream));
+}
