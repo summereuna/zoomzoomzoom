@@ -4,11 +4,18 @@ const myFace = document.getElementById("myFace");
 const muteBtn = document.getElementById("muteBtn");
 const cameraBtn = document.getElementById("cameraBtn");
 const camerasSelect = document.getElementById("cameras");
+//1.
+const call = document.getElementById("call");
+
+//2.
+call.hidden = true;
 
 //전역 변수
 let myStream;
 let muted = false;
 let cameraOff = false;
+//7. 사용자가 입력한 룸 이름을 어딘가에 저장해야 한다.
+let roomName;
 
 //사용자의 카메라 장치 가져오는 함수
 async function getCamera() {
@@ -66,9 +73,6 @@ async function getMedia(deviceId) {
   }
 }
 
-//stream 호출하기
-getMedia();
-
 //muteBtn 클릭 시 작동하는 핸들러
 function handleMuteClick() {
   //버튼 클릭 시 오디오 track에 track.enabled을 현재 값과 반대 값이 되게 하기
@@ -109,3 +113,47 @@ muteBtn.addEventListener("click", handleMuteClick);
 cameraBtn.addEventListener("click", handleCameraClick);
 //카메라 선택하면 이벤트 추가
 camerasSelect.addEventListener("iput", handleCameraChange);
+
+/* Welcome Form (join a room) */
+
+//3.
+const welcome = document.getElementById("welcome");
+const welcomeForm = welcome.querySelector("form");
+
+//6. 룸에 입장하면 call div 보여주기
+function startMedia() {
+  welcome.hidden = true;
+  call.hidden = false;
+  //그러고 나서 getMedia 호출해서 카메라/마이크 등 불러오기
+  getMedia();
+}
+
+//5. 사용자가 입력한 roomName 서버에 넘겨주고, 서버에서 룸에 입장시킴
+function handleWelcomeSubmit(event) {
+  event.preventDefault();
+  const input = welcomeForm.querySelector("input");
+  // 소켓 아이오에 사용자가 적은 payload가 방 이름으로 방 입장하게 하기
+  socket.emit("join_room", input.value, startMedia);
+  //emit 마지막 인자로 startMedia 펑션 넣어서 자동 실행되게 하기
+  //roomName에 사용자가 입력한 값 넣어주기
+  roomName = input.value;
+  //인풋 창 비워주기
+  input.value = "";
+}
+
+//4.
+welcomeForm.addEventListener("submit", handleWelcomeSubmit);
+
+/*
+사용자가 room에 참가한 다음에 call 시작될 수 있게 하자.
+- div#welcome과 div#call을 불러온다.
+- div#call을 숨긴다.
+- welcome form 입력되면 div#welcome 숨기고 div#call 보여준다.
+*/
+
+/* Socket code */
+//다른 사람이 내 방에 들어오면 누군가 왓다고 알리기
+socket.on("welcome", () => {
+  console.log("Somebody joined");
+  //오케이 이제 peer-to-peer를 적용할 때가 왔다!
+});

@@ -10,11 +10,16 @@ html(lang="en")
         header 
             h1 Zoom Zoom Zoom
         main
-            div#myStream
-                video#myFace(autoplay, playinlin, widht="400", height="400")
-                button#muteBtn Mute
-                button#cameraBtn Turn Camera Off
-                select#cameras
+            div#welcome
+                form
+                    input(type="text", placeholder="room name", required)
+                    button Enter Room
+            div#call
+                div#myStream
+                    video#myFace(autoplay, playinlin, widht="400", height="400")
+                    button#muteBtn Mute
+                    button#cameraBtn Turn Camera Off
+                    select#cameras
         footer &copy; #{new Date().getFullYear()} ZZZ
         script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js")

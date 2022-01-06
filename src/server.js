@@ -33,5 +33,16 @@ instrument(wsServer, {
   auth: false,
 });
 
+wsServer.on("connection", (socket) => {
+  //프론트엔드에서 보낸 roomName 받아서
+  socket.on("join_room", (roomName, startMedia) => {
+    //그 방에 조인 시키기
+    socket.join(roomName);
+    startMedia();
+    //그 방에 웰컴 에밋 보내기
+    socket.to(roomName).emit("welcome");
+  });
+});
+
 const handleListen = () => console.log(`🚀 Listening on http://localhost:3000`);
 httpServer.listen(3000, handleListen);
