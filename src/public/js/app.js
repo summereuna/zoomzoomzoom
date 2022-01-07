@@ -147,7 +147,7 @@ async function handleWelcomeSubmit(event) {
 welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 
 /* Socket code */
-//Peer A인 브라우저에서만 실행되는 코드: offer 생성해 setLocalDescription하고 offer 보냄
+//🌸Peer A인 브라우저에서만 실행되는 코드: offer 생성해 setLocalDescription하고 offer 보냄
 socket.on("welcome", async () => {
   //offer 생성
   const offer = await myPeerConnection.createOffer();
@@ -158,11 +158,24 @@ socket.on("welcome", async () => {
   socket.emit("offer", offer, roomName);
 });
 
-//서버에서 Peer A의 offer를 전달 받은 다른 Peer들에서 실행되는 코드: offer 받고 answer 생성하여 보냄
-socket.on("offer", (offer) => {
+//🌼서버에서 Peer A의 offer를 전달 받은 다른 Peer들에서 실행되는 코드: offer 받고 answer 생성하여 보냄
+socket.on("offer", async (offer) => {
   //console.log(offer);
   //Peer B가 offer를 받아서 remoteDescription 설정함
   myPeerConnection.setRemoteDescription(offer);
+  //answer 생성_앞에 await 달아 줄 것
+  const answer = await myPeerConnection.createAnswer();
+  //console.log(answer);
+  //answer로 LocalDescription 설정하기
+  myPeerConnection.setLocalDescription(answer);
+  //서버에 answer 보내기
+  socket.emit("answer", answer, roomName);
+});
+
+//🌸서버에서 보낸 answer를 다시 Peer A가 받음 ㅇㅇ!
+socket.on("answer", (answer) => {
+  //peer A가 answer를 받아서 remoteDescription 설정함
+  myPeerConnection.setRemoteDescription(answer);
 });
 
 /* RTC code */
