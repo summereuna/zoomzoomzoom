@@ -122,7 +122,7 @@ const welcomeForm = welcome.querySelector("form");
 //룸에 입장하면 호출되는 startMedia
 //🔥 1. 양쪽 브라우저에서 돌아가는 코드는 바로 이 부분!!
 //양쪽 브라우저에서 방에 참가하면, 방이 비어있든 말든 상관 없이 이 코드 실행함
-async function startMedia() {
+async function initCall() {
   welcome.hidden = true;
   call.hidden = false;
   //그러고 나서 getMedia 호출해서 카메라/마이크 등 불러오기
@@ -132,12 +132,12 @@ async function startMedia() {
 }
 
 //사용자가 입력한 roomName 서버에 넘겨주고, 서버에서 룸에 입장시킴
-function handleWelcomeSubmit(event) {
+async function handleWelcomeSubmit(event) {
   event.preventDefault();
   const input = welcomeForm.querySelector("input");
+  await initCall();
   // 소켓 아이오에 사용자가 적은 payload가 방 이름으로 방 입장하게 하기
-  socket.emit("join_room", input.value, startMedia);
-  //emit 마지막 인자로 startMedia 펑션 넣어서 자동 실행되게 하기
+  socket.emit("join_room", input.value);
   //roomName에 사용자가 입력한 값 넣어주기
   roomName = input.value;
   //인풋 창 비워주기
@@ -160,7 +160,9 @@ socket.on("welcome", async () => {
 
 //서버에서 Peer A의 offer를 전달 받은 다른 Peer들에서 실행되는 코드: offer 받고 answer 생성하여 보냄
 socket.on("offer", (offer) => {
-  console.log(offer);
+  //console.log(offer);
+  //Peer B가 offer를 받아서 remoteDescription 설정함
+  myPeerConnection.setRemoteDescription(offer);
 });
 
 /* RTC code */
