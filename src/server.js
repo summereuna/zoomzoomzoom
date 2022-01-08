@@ -51,6 +51,10 @@ wsServer.on("connection", (socket) => {
     //해당하는 방으로 answer 전달하기
     socket.to(roomName).emit("answer", answer);
   });
+  //🔥 백엔드에서 ice 에밋 받아서 같은 방으로 ice 보내기
+  socket.on("ice", (ice, roomName) => {
+    socket.to(roomName).emit("ice", ice);
+  });
 });
 
 const handleListen = () => console.log(`🚀 Listening on http://localhost:3000`);

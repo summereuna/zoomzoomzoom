@@ -160,6 +160,7 @@ socket.on("welcome", async () => {
 
 //🌼서버에서 Peer A의 offer를 전달 받은 다른 Peer들에서 실행되는 코드: offer 받고 answer 생성하여 보냄
 socket.on("offer", async (offer) => {
+  console.log("received the offer");
   //console.log(offer);
   //Peer B가 offer를 받아서 remoteDescription 설정함
   myPeerConnection.setRemoteDescription(offer);
@@ -170,12 +171,20 @@ socket.on("offer", async (offer) => {
   myPeerConnection.setLocalDescription(answer);
   //서버에 answer 보내기
   socket.emit("answer", answer, roomName);
+  console.log("sent the answer");
 });
 
 //🌸서버에서 보낸 answer를 다시 Peer A가 받음 ㅇㅇ!
 socket.on("answer", (answer) => {
+  console.log("received the answer");
   //peer A가 answer를 받아서 remoteDescription 설정함
   myPeerConnection.setRemoteDescription(answer);
+});
+
+//서버에서 보낸 ice 받기
+socket.on("ice", (ice) => {
+  console.log("received candidate");
+  myPeerConnection.addIceCandidate(ice);
 });
 
 /* RTC code */
@@ -183,10 +192,19 @@ socket.on("answer", (answer) => {
 function makeConnection() {
   // 양쪽 브라우저에 peer-to-peer 연결 위해 구성
   myPeerConnection = new RTCPeerConnection();
+  //🔥 myPeerConnection을 만들면 바로 event listen하기
+  myPeerConnection.addEventListener("icecandidate", handleIce);
   //양쪽 브라우저에서 카메라와 마이크의 데이터 stream을 받아서 그것들을 연결 안에 집어 넣음
   //console.log(myStream.getTracks());
   //각각의 트랙들을 myPeerConnection에 각각의 track을 addTrack(track) 해주면 된다.
   myStream
     .getTracks()
     .forEach((track) => myPeerConnection.addTrack(track, myStream));
+}
+
+function handleIce(data) {
+  //console.log(data);
+  console.log("sent candidate");
+  //Peer들 끼리 서로 candidate를 주고 받을 수 있도록 보내기
+  socket.emit("ice", data.candidate, roomName);
 }
