@@ -192,8 +192,10 @@ socket.on("ice", (ice) => {
 function makeConnection() {
   // 양쪽 브라우저에 peer-to-peer 연결 위해 구성
   myPeerConnection = new RTCPeerConnection();
-  //🔥 myPeerConnection을 만들면 바로 event listen하기
+  //myPeerConnection을 만들면 바로 event listen하기
   myPeerConnection.addEventListener("icecandidate", handleIce);
+  //🔥 연결을 만들때, 이벤트 리스너 만들자.
+  myPeerConnection.addEventListener("addstream", handleAddStream);
   //양쪽 브라우저에서 카메라와 마이크의 데이터 stream을 받아서 그것들을 연결 안에 집어 넣음
   //console.log(myStream.getTracks());
   //각각의 트랙들을 myPeerConnection에 각각의 track을 addTrack(track) 해주면 된다.
@@ -207,4 +209,14 @@ function handleIce(data) {
   console.log("sent candidate");
   //Peer들 끼리 서로 candidate를 주고 받을 수 있도록 보내기
   socket.emit("ice", data.candidate, roomName);
+}
+
+//이벤트의 데이터를 불러오자.
+function handleAddStream(data) {
+  //console.log("got a stream from my peer");
+  //console.log("Peer's Stream:", data.stream);
+  //console.log("My Stream:", myStream);
+  const peersStream = document.getElementById("peerFace");
+  //상대방의 stream을 비디오의 srcObject에 넣어주기!
+  peersStream.srcObject = data.stream;
 }
