@@ -106,7 +106,27 @@ function handleCameraClick() {
 
 //카메라 선택 바꾸면 작동하는 핸들러: 각 카메라 deviceId 사용해 stream 바꿔주기
 async function handleCameraChange() {
+  //1. getMedia()로 새로운 디바이스 아이디로 새로운 Stream 생성헤서 내 화면 바꿈ㅇㅇ
   await getMedia(camerasSelect.value);
+  //2.여기 부터는 상대방 화면에도 내가 바꾼 화면의 스트림의 비디오 트랙 얻어서 그 바뀐 트랙을 넣어주는 거임
+  //그렇기 때문에 getMedia()코드 이후로 받는 video Track은 새로운 디바이스로 가져온 바뀐 트랙인 것!
+  if (myPeerConnection) {
+    //3. myStream에서 업데이트된 비디오 트랙 배열의 첫번째 가져오자.
+    const videoTrack = myStream.getVideoTracks()[0];
+    //4. myPeerConnection에서 senders 어떻게 생겼나 확인
+    //console.log(myPeerConnection.getSenders());
+    //5. myPeerConnection이 있다면
+    // 피어커넥션의 비디오 센더를 가져와라!
+    //즉, myPeerConnection의 senders에서 sender의 track의 kind가 "video"인 sender를 찾아와라
+    const videoSender = myPeerConnection
+      .getSender()
+      .find((sender) => sender.track.kind === "video");
+    //6. 피어커넥션의 비디오 센더 잘 찾아와 지는지 확인
+    //console.log(videoSender);
+    //7. myPeerConnection의 비디오 sender를 myStream에서 바꾼 videoTrack으로 대체하기
+    //그러면 상대방이 보는 내 화면도 내가 바꾼걸로 업데이트 된다.
+    videoSender.replaceTrack(videoTrack);
+  }
 }
 
 //컨트롤 버튼에 이벤트 추가
