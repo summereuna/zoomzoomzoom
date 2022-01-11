@@ -19,7 +19,7 @@ let roomName;
 let myPeerConnection;
 
 //사용자의 카메라 장치 가져오는 함수
-async function getCamera() {
+async function getCameras() {
   try {
     const devices = await navigator.mediaDevices.enumerateDevices();
     //device의 kind가 "videoinput"인 device만 필터링해서 가져오기
@@ -64,10 +64,10 @@ async function getMedia(deviceId) {
       deviceId ? cameraConstraints : initialConstraints
     );
     myFace.srcObject = myStream;
-    //Media를 get한 후, getCamera 호출
-    //내가 가진 카메라를 옵션으로 페인팅해주는 getCamera를 deviceId가 없을 때 즉, 첨 딱 한번만 실행되게 해주기
+    //Media를 get한 후, getCameras 호출
+    //내가 가진 카메라를 옵션으로 페인팅해주는 getCameras를 deviceId가 없을 때 즉, 첨 딱 한번만 실행되게 해주기
     if (!deviceId) {
-      await getCamera();
+      await getCameras();
     }
   } catch (err) {
     console.log(err);
@@ -119,7 +119,7 @@ async function handleCameraChange() {
     // 피어커넥션의 비디오 센더를 가져와라!
     //즉, myPeerConnection의 senders에서 sender의 track의 kind가 "video"인 sender를 찾아와라
     const videoSender = myPeerConnection
-      .getSender()
+      .getSenders()
       .find((sender) => sender.track.kind === "video");
     //6. 피어커넥션의 비디오 센더 잘 찾아와 지는지 확인
     //console.log(videoSender);
@@ -211,10 +211,23 @@ socket.on("ice", (ice) => {
 //실제로 연결 만드는 함수
 function makeConnection() {
   // 양쪽 브라우저에 peer-to-peer 연결 위해 구성
-  myPeerConnection = new RTCPeerConnection();
+  //인자로 스턴서버 넣어주자.
+  myPeerConnection = new RTCPeerConnection({
+    iceServers: [
+      {
+        urls: [
+          "stun:stun.l.google.com:19302",
+          "stun:stun1.l.google.com:19302",
+          "stun:stun2.l.google.com:19302",
+          "stun:stun3.l.google.com:19302",
+          "stun:stun4.l.google.com:19302",
+        ],
+      },
+    ],
+  });
   //myPeerConnection을 만들면 바로 event listen하기
   myPeerConnection.addEventListener("icecandidate", handleIce);
-  //🔥 연결을 만들때, 이벤트 리스너 만들자.
+  //연결을 만들때, 이벤트 리스너 만들자.
   myPeerConnection.addEventListener("addstream", handleAddStream);
   //양쪽 브라우저에서 카메라와 마이크의 데이터 stream을 받아서 그것들을 연결 안에 집어 넣음
   //console.log(myStream.getTracks());
@@ -236,7 +249,7 @@ function handleAddStream(data) {
   //console.log("got a stream from my peer");
   //console.log("Peer's Stream:", data.stream);
   //console.log("My Stream:", myStream);
-  const peersStream = document.getElementById("peerFace");
+  const peerFace = document.getElementById("peerFace");
   //상대방의 stream을 비디오의 srcObject에 넣어주기!
-  peersStream.srcObject = data.stream;
+  peerFace.srcObject = data.stream;
 }
