@@ -17,6 +17,8 @@ let cameraOff = false;
 let roomName;
 //2-1. peerConnection을 모든 곳에 다 공유하기 위해 전역변수로 만들면 된다.
 let myPeerConnection;
+//데이터 채널
+let myDataChannel;
 
 //사용자의 카메라 장치 가져오는 함수
 async function getCameras() {
@@ -169,6 +171,22 @@ welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 /* Socket code */
 //🌸Peer A인 브라우저에서만 실행되는 코드: offer 생성해 setLocalDescription하고 offer 보냄
 socket.on("welcome", async () => {
+  //1. offer를 하는 주체에 데이터 채널을 만들면 된다.
+  //2. (주의) offer 만들기 전에 데이터 채널 만들어야 한다.
+  //"chat"이라는 채널의 데이터 채널을 만들어 peer A의 myDataChannel를 정의한다.
+  myDataChannel = myPeerConnection.createDataChannel("chat");
+  /*아래 코드랑 같은 뜻임
+  myDataChannel.addEventListener("message", (e) => {
+    console.log(e);
+  });
+  */
+  //3. peer A의 데이터채널이 메세지를 받으면 콘솔에 이벤트를 찍어보자.
+  //myDataChannel.addEventListener("message", console.log);
+  //4. peer A의 데이터채널이 메세지를 받으면 이벤트의 data를 콘솔에 찍는다.
+  //그러면 peer B가 myDataChannel.send()로 보낸 문자가 들어 있는 것을 확인할 수 있다.
+  myDataChannel.addEventListener("message", (event) => console.log(event.data));
+  //5. 데이터 채널 만들었다고 콘솔에 찍기
+  console.log("made data channel");
   //offer 생성
   const offer = await myPeerConnection.createOffer();
   //offer로 연결 구성
@@ -180,6 +198,29 @@ socket.on("welcome", async () => {
 
 //🌼서버에서 Peer A의 offer를 전달 받은 다른 Peer들에서 실행되는 코드: offer 받고 answer 생성하여 보냄
 socket.on("offer", async (offer) => {
+  //다른 peer는 data channel을 만들 필요가 없다. 다른 피어는 이벤트 듣는 리스너 만들면 됨 ㅇㅇ
+  /*아래 코드랑 같은 코드
+  myPeerConnection.addEventListener("datachannel", (data) => {
+    console.log(data);
+  });
+  */
+  //1. myPeerConnection에 데이터 채널 이벤트 리스너 만들기: 데이터 채널의 데이터를 콘솔에 출력
+  //myPeerConnection.addEventListener("datachannel", console.log);
+  //이렇게 하면 peer B는 peer A가 만든 데이터 채널의 data를 얻어 오는 것을 볼 수 있다.
+  //콘솔을 보면 channel 이라고 적힌 키 값을 확인하면 peer A가 보낸 데이터 채널 값을 알 수 있다.
+  //2. 내 연결에 새로운 data channel(peer A꺼)이 있으면, 채널을 받아서 peer B의 myDataChannel에 넣어주자.
+  myPeerConnection.addEventListener("datachannel", (event) => {
+    //2-1. myDataChannel에 event의 channel 값을 넣어주자.
+    //peer A에서 보내주는 이벤트의 채널 값을 peer B의 myDataChannel로 정의 한다.
+    myDataChannel = event.channel;
+    //3. peer B의 데이터채널이 메세지를 받으면 콘솔에 이벤트를 찍어보자.
+    // myDataChannel.addEventListener("message", console.log);
+    //4. peer B의 데이터채널이 메세지를 받으면 이벤트의 data를 콘솔에 찍는다.
+    //그러면 peer A가 myDataChannel.send()로 보낸 문자가 들어 있는 것을 확인할 수 있다.
+    myDataChannel.addEventListener("message", (event) =>
+      console.log(event.data)
+    );
+  });
   console.log("received the offer");
   //console.log(offer);
   //Peer B가 offer를 받아서 remoteDescription 설정함
@@ -220,7 +261,7 @@ function makeConnection() {
           "stun:stun1.l.google.com:19302",
           "stun:stun2.l.google.com:19302",
           "stun:stun3.l.google.com:19302",
-          "stun:stun4.l.google.com:19302",
+          //"stun:stun4.l.google.com:19302",
         ],
       },
     ],
