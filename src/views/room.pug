@@ -1,0 +1,20 @@
+extends ./layout/layout
+
+block contents
+    header
+        h1 Zoom Zoom Zoom
+    main
+        ion-icon(name="heart-outline" style={ 'font-size': '50px'})
+        ion-icon(name="videocam-outline" style={ 'font-size': '50px'})
+        ion-icon(name="videocam-off-outline" style={ 'font-size': '50px'})
+        ion-icon(name="mic-outline" style={ 'font-size': '50px'})
+        ion-icon(name="mic-off-outline" style={ 'font-size': '50px'})
+        ion-icon(name="close-outline" style={ 'font-size': '50px'})
+        ion-icon(name="paper-plane-outline" style={ 'font-size': '50px'})
+        div#call
+            div#myStream
+                video#myFace(autoplay, playinlin, widht="400", height="400")
+                button#muteBtn Mute
+                button#cameraBtn Turn Camera Off
+                select#cameras
+            video#peerFace(autoplay, playinlin, widht="400", height="400")

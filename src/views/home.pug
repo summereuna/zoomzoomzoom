@@ -1,26 +1,25 @@
-doctype html
-html(lang="en")
-    head
-        meta(charset="UTF-8")
-        meta(http-equiv="X-UA-Compatible", content="IE=edge")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title Zoom Zoom Zoom
-        link(rel="stylesheet", href="https://unpkg.com/mvp.css")
-    body
-        header 
-            h1 Zoom Zoom Zoom
-        main
-            div#welcome
-                form
-                    input(type="text", placeholder="room name", required)
-                    button Enter Room
-            div#call
-                div#myStream
-                    video#myFace(autoplay, playinlin, widht="400", height="400")
-                    button#muteBtn Mute
-                    button#cameraBtn Turn Camera Off
-                    select#cameras
-            video#peerFace(autoplay, playinlin, widht="400", height="400")
-        footer &copy; #{new Date().getFullYear()} ZZZ
-        script(src="/socket.io/socket.io.js")
-        script(src="/public/js/app.js")
+extends ./layout/layout
+
+block contents
+    header 
+        h1 Zoom Zoom Zoom
+    main
+        section#userInfo
+            ion-icon(name="person-circle-outline" style={ 'font-size': '64px'})
+            h4.userName USER NAME
+            ion-icon(name="settings-outline" style={ 'font-size': '50px'})
+        div#welcome
+            form
+                ion-icon.createRoomBtn(name="add-circle-outline" style={ 'font-size': '50px'})
+                input(type="text", placeholder="Room Name", required)
+                button Start Live
+        section#roomList
+            h1 Live
+            div.room
+                div.roomInfo
+                    ion-icon(name="person-circle-outline" style={ 'font-size': '50px'})
+                    ion-icon(name="people-circle-outline" style={ 'font-size': '50px'})
+                    h4.userName USER NAME
+                div.roomTitle
+                    h4 Room Title
+                    button.enterRoomBtn Enter

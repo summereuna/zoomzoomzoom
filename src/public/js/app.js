@@ -1,7 +1,6 @@
 const socket = io();
 
-/* Video Call code */
-
+// #1. Video Call Code
 const myFace = document.getElementById("myFace");
 const muteBtn = document.getElementById("muteBtn");
 const cameraBtn = document.getElementById("cameraBtn");
@@ -10,17 +9,15 @@ const call = document.getElementById("call");
 
 call.hidden = true;
 
-//전역 변수
+// 전역 변수
 let myStream;
 let muted = false;
 let cameraOff = false;
 let roomName;
-//2-1. peerConnection을 모든 곳에 다 공유하기 위해 전역변수로 만들면 된다.
 let myPeerConnection;
-//데이터 채널
 let myDataChannel;
 
-//사용자의 카메라 장치 가져오는 함수
+// getCameras: 사용자의 카메라 장치 가져오기
 async function getCameras() {
   try {
     const devices = await navigator.mediaDevices.enumerateDevices();
