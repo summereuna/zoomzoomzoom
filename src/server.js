@@ -13,6 +13,7 @@ app.set("views", __dirname + "/views");
 app.use("/public", express.static(__dirname + "/public"));
 app.get("/", (_, res) => res.render("home"));
 app.get("/*", (_, res) => res.redirect("/"));
+//app.get("/room/:id", (_, res) => res.render("room"));
 
 const httpServer = http.createServer(app);
 //const wsServer = SocketIO(httpServer); 대신
@@ -54,6 +55,15 @@ wsServer.on("connection", (socket) => {
   //🔥 백엔드에서 ice 에밋 받아서 같은 방으로 ice 보내기
   socket.on("ice", (ice, roomName) => {
     socket.to(roomName).emit("ice", ice);
+  });
+  //연결 끊기면
+  socket.on("disconnecting", () => {
+    socket.rooms.forEach((room) => socket.to(room).emit("bye"));
+  });
+  //새로운 메세지
+  socket.on("new_msg", (msg, roomName, done) => {
+    socket.to(roomName).emit("new_msg", msg);
+    done();
   });
 });
 

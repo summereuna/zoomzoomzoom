@@ -6,8 +6,12 @@ const muteBtn = document.getElementById("muteBtn");
 const cameraBtn = document.getElementById("cameraBtn");
 const camerasSelect = document.getElementById("cameras");
 const call = document.getElementById("call");
+// 채팅
+const roomChat = document.getElementById("roomChat");
+const roomChatForm = roomChat.querySelector("form");
 
 call.hidden = true;
+roomChat.hidden = true;
 
 // 전역 변수
 let myStream;
@@ -80,10 +84,10 @@ function handleMuteClick() {
     .getAudioTracks()
     .forEach((track) => (track.enabled = !track.enabled));
   if (!muted) {
-    muteBtn.innerText = "Unmute";
+    muteBtn.setAttribute("name", "mic-off-outline");
     muted = true;
   } else {
-    muteBtn.innerText = "Mute";
+    muteBtn.setAttribute("name", "mic-outline");
     muted = false;
   }
 }
@@ -95,10 +99,10 @@ function handleCameraClick() {
     .getVideoTracks()
     .forEach((track) => (track.enabled = !track.enabled));
   if (!cameraOff) {
-    cameraBtn.innerText = "Turn Camera On";
+    cameraBtn.setAttribute("name", "videocam-off-outline");
     cameraOff = true;
   } else {
-    cameraBtn.innerText = "Turn Camera Off";
+    cameraBtn.setAttribute("name", "videocam-outline");
     cameraOff = false;
   }
 }
@@ -144,6 +148,7 @@ const welcomeForm = welcome.querySelector("form");
 async function initCall() {
   welcome.hidden = true;
   call.hidden = false;
+  roomChat.hidden = false;
   //그러고 나서 getMedia 호출해서 카메라/마이크 등 불러오기
   await getMedia();
   //3. makeConnection 호출
@@ -245,6 +250,11 @@ socket.on("ice", (ice) => {
   myPeerConnection.addIceCandidate(ice);
 });
 
+//연결 끊겼을 때
+socket.on("bye", () => {
+  addMessage(`Someone left ${roomName}!`);
+});
+
 /* RTC code */
 //실제로 연결 만드는 함수
 function makeConnection() {
@@ -291,3 +301,26 @@ function handleAddStream(data) {
   //상대방의 stream을 비디오의 srcObject에 넣어주기!
   peerFace.srcObject = data.stream;
 }
+
+// chat
+function handleMessageSubmit(event) {
+  event.preventDefault();
+  const input = roomChatForm.querySelector("input");
+  //console.log(input.value);
+  const msg = input.value;
+  socket.emit("new_msg", msg, roomName, () => {
+    addMessage(`You: ${msg}`);
+  });
+  input.value = "";
+}
+
+function addMessage(msg) {
+  const ul = roomChat.querySelector("ul");
+  const li = document.createElement("li");
+  li.innerText = msg;
+  ul.appendChild(li);
+}
+
+roomChatForm.addEventListener("submit", handleMessageSubmit);
+
+socket.on("new_msg", addMessage);
