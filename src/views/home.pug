@@ -6,8 +6,11 @@ block contents
     main
         section#userInfo
             ion-icon(name="person-circle-outline" style={ 'font-size': '64px'})
-            h4.userName USER NAME
-            ion-icon(name="settings-outline" style={ 'font-size': '50px'})
+            h4#nickname USER NAME
+            form#nicknameChange
+                input(type="text", placeholder="Your Nickname", required)
+                button
+                    ion-icon(name="settings-outline" style={ 'font-size': '50px'})
         div#welcome
             form
                 ion-icon.createRoomBtn(name="add-circle-outline" style={ 'font-size': '50px'})
@@ -22,7 +25,7 @@ block contents
                         h4.userName USER NAME
                     div.roomTitle
                         h4 Room Title
-                        button.enterRoomBtn Enter        
+                        button.enterRoomBtn Enter
         div#call
             ion-icon(name="close-outline" style={ 'font-size': '50px'})
             div#myStream
@@ -36,7 +39,7 @@ block contents
             ul
             form
                 input(type="text", placeholder="메세지 입력하기...", required)
-                button
-                    ion-icon(type="submit" name="paper-plane-outline" style={ 'font-size': '50px'})
-            button#chatHeart
-                ion-icon(name="heart-outline" style={ 'font-size': '50px'})
+                button(type="submit")
+                    ion-icon(name="paper-plane-outline" style={ 'font-size': '50px'})
+                button#chatHeart(type="button")
+                    ion-icon(name="heart-outline" style={ 'font-size': '50px'})

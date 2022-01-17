@@ -303,11 +303,22 @@ function handleAddStream(data) {
 }
 
 // chat
+const sendHeart = document.getElementById("chatHeart");
+
 function handleMessageSubmit(event) {
+  //console.log(event.type);
   event.preventDefault();
   const input = roomChatForm.querySelector("input");
+  let msg;
   //console.log(input.value);
-  const msg = input.value;
+  switch (event.type) {
+    case "click":
+      msg = "❤️";
+      break;
+    default:
+      msg = input.value;
+      break;
+  }
   socket.emit("new_msg", msg, roomName, () => {
     addMessage(`You: ${msg}`);
   });
@@ -322,5 +333,6 @@ function addMessage(msg) {
 }
 
 roomChatForm.addEventListener("submit", handleMessageSubmit);
+sendHeart.addEventListener("click", handleMessageSubmit);
 
 socket.on("new_msg", addMessage);
