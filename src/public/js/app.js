@@ -1,17 +1,27 @@
 const socket = io();
 
-// #1. Video Call Code
+// 닉네임
+const userInfo = document.getElementById("userInfo");
+const nicknameForm = userInfo.querySelector("form");
+const nickname = document.getElementById("nickname");
+// 대기 장소, 룸 들어가기
+const welcome = document.getElementById("welcome");
+const welcomeForm = welcome.querySelector("form");
+// room
+const room = document.getElementById("room");
+// Video Call Code
+const call = document.getElementById("call");
 const myFace = document.getElementById("myFace");
 const muteBtn = document.getElementById("muteBtn");
 const cameraBtn = document.getElementById("cameraBtn");
 const camerasSelect = document.getElementById("cameras");
-const call = document.getElementById("call");
+const leaveRoomBtn = document.getElementById("leaveRoomBtn");
 // 채팅
 const roomChat = document.getElementById("roomChat");
 const roomChatForm = roomChat.querySelector("form");
 
-call.hidden = true;
-roomChat.hidden = true;
+welcome.hidden = true;
+room.hidden = true;
 
 // 전역 변수
 let myStream;
@@ -20,6 +30,18 @@ let cameraOff = false;
 let roomName;
 let myPeerConnection;
 let myDataChannel;
+
+//1. 닉네임 설정
+function handleNicknameSubmit(event) {
+  event.preventDefault();
+  const input = nicknameForm.querySelector("input");
+  socket.emit("nickname", input.value);
+  nickname.innerText = input.value;
+  userInfo.hidden = true;
+  welcome.hidden = false;
+}
+
+nicknameForm.addEventListener("submit", handleNicknameSubmit);
 
 // getCameras: 사용자의 카메라 장치 가져오기
 async function getCameras() {
@@ -138,17 +160,12 @@ cameraBtn.addEventListener("click", handleCameraClick);
 //카메라 선택하면 이벤트 추가
 camerasSelect.addEventListener("iput", handleCameraChange);
 
-/* Welcome Form (join a room) */
-const welcome = document.getElementById("welcome");
-const welcomeForm = welcome.querySelector("form");
-
 //룸에 입장하면 호출되는 startMedia
 //🔥 1. 양쪽 브라우저에서 돌아가는 코드는 바로 이 부분!!
 //양쪽 브라우저에서 방에 참가하면, 방이 비어있든 말든 상관 없이 이 코드 실행함
 async function initCall() {
   welcome.hidden = true;
-  call.hidden = false;
-  roomChat.hidden = false;
+  room.hidden = false;
   //그러고 나서 getMedia 호출해서 카메라/마이크 등 불러오기
   await getMedia();
   //3. makeConnection 호출
@@ -170,9 +187,27 @@ async function handleWelcomeSubmit(event) {
 
 welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 
+function clearRoom() {
+  room.hidden = true;
+  const ul = roomChat.querySelector("ul");
+  while (ul.hasChildNodes()) {
+    ul.removeChild(ul.firstChild);
+  }
+  welcome.hidden = false;
+}
+
+function handleLeaveRoom(event) {
+  event.preventDefault();
+  socket.emit("left_room", roomName, clearRoom);
+}
+
+//방 나가기
+leaveRoomBtn.addEventListener("click", handleLeaveRoom);
+
 /* Socket code */
 //🌸Peer A인 브라우저에서만 실행되는 코드: offer 생성해 setLocalDescription하고 offer 보냄
-socket.on("welcome", async () => {
+socket.on("welcome", async (user) => {
+  addMessage(`🌟 "${user}"님이 ${roomName}에 참여합니다!`);
   //1. offer를 하는 주체에 데이터 채널을 만들면 된다.
   //2. (주의) offer 만들기 전에 데이터 채널 만들어야 한다.
   //"chat"이라는 채널의 데이터 채널을 만들어 peer A의 myDataChannel를 정의한다.
@@ -251,8 +286,8 @@ socket.on("ice", (ice) => {
 });
 
 //연결 끊겼을 때
-socket.on("bye", () => {
-  addMessage(`Someone left ${roomName}!`);
+socket.on("bye", (user) => {
+  addMessage(`🌟 "${user}"님이 ${roomName} 방을 떠났습니다!`);
 });
 
 /* RTC code */

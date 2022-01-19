@@ -4,42 +4,42 @@ block contents
     header 
         h1 Zoom Zoom Zoom
     main
-        section#userInfo
+        div#userInfo
             ion-icon(name="person-circle-outline" style={ 'font-size': '64px'})
-            h4#nickname USER NAME
-            form#nicknameChange
+            form#nicknameForm
                 input(type="text", placeholder="Your Nickname", required)
                 button
-                    ion-icon(name="settings-outline" style={ 'font-size': '50px'})
+                    ion-icon(name="settings-outline" style={ 'font-size': '20px'})
         div#welcome
+            ion-icon(name="person-circle-outline" style={ 'font-size': '30px'})
+            h4#nickname
+            ion-icon.createRoomBtn(name="add-circle-outline" style={ 'font-size': '30px'})
             form
-                ion-icon.createRoomBtn(name="add-circle-outline" style={ 'font-size': '50px'})
                 input(type="text", placeholder="Room Name", required)
                 button Start Live
             section#roomList
                 h1 Live
                 div.room
                     div.roomInfo
-                        ion-icon(name="person-circle-outline" style={ 'font-size': '50px'})
-                        ion-icon(name="people-circle-outline" style={ 'font-size': '50px'})
-                        h4.userName USER NAME
+                        ion-icon(name="people-circle-outline" style={ 'font-size': '30px'})
                     div.roomTitle
                         h4 Room Title
                         button.enterRoomBtn Enter
-        div#call
-            ion-icon(name="close-outline" style={ 'font-size': '50px'})
-            div#myStream
-                video#myFace(autoplay, playinlin, widht="400", height="400")
-                ion-icon(name="mic-outline" style={ 'font-size': '50px'})#muteBtn
-                ion-icon(name="videocam-outline" style={ 'font-size': '50px'})#cameraBtn
-                select#cameras
-            video#peerFace(autoplay, playinlin, widht="400", height="400")
-        div#roomChat
-            h3
-            ul
-            form
-                input(type="text", placeholder="메세지 입력하기...", required)
-                button(type="submit")
-                    ion-icon(name="paper-plane-outline" style={ 'font-size': '50px'})
-                button#chatHeart(type="button")
-                    ion-icon(name="heart-outline" style={ 'font-size': '50px'})
+        div#room
+            div#call
+                ion-icon#leaveRoomBtn(name="close-outline" style={ 'font-size': '30px'})
+                div#myStream
+                    video#myFace(autoplay, playinlin, widht="250", height="400")
+                    ion-icon(name="mic-outline" style={ 'font-size': '30px'})#muteBtn
+                    ion-icon(name="videocam-outline" style={ 'font-size': '30px'})#cameraBtn
+                    select#cameras
+                video#peerFace(autoplay, playinlin, widht="250", height="400")
+            div#roomChat
+                h3
+                ul
+                form
+                    input(type="text", placeholder="메세지 입력하기...", required)
+                    button(type="submit")
+                        ion-icon(name="paper-plane-outline" style={ 'font-size': '30px'})
+                    button#chatHeart(type="button")
+                        ion-icon(name="heart-outline" style={ 'font-size': '30px'})

@@ -35,12 +35,14 @@ instrument(wsServer, {
 });
 
 wsServer.on("connection", (socket) => {
+  //닉네임 받기
+  socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
   //프론트엔드에서 보낸 roomName 받아서
   socket.on("join_room", (roomName) => {
     //그 방에 조인 시키기
     socket.join(roomName);
     //그 방에 웰컴 에밋 보내기
-    socket.to(roomName).emit("welcome");
+    socket.to(roomName).emit("welcome", socket.nickname);
   });
   //프론트엔드에서 Peer A가 보낸 offer 서버에서 받기
   socket.on("offer", (offer, roomName) => {
@@ -58,11 +60,18 @@ wsServer.on("connection", (socket) => {
   });
   //연결 끊기면
   socket.on("disconnecting", () => {
-    socket.rooms.forEach((room) => socket.to(room).emit("bye"));
+    socket.rooms.forEach((room) =>
+      socket.to(room).emit("bye", socket.nickname)
+    );
   });
   //새로운 메세지
   socket.on("new_msg", (msg, roomName, done) => {
-    socket.to(roomName).emit("new_msg", msg);
+    socket.to(roomName).emit("new_msg", `${socket.nickname}: ${msg}`);
+    done();
+  });
+  socket.on("left_room", (roomName, done) => {
+    socket.to(roomName).emit("bye", socket.nickname);
+    socket.leave(roomName);
     done();
   });
 });
