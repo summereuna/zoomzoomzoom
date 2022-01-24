@@ -1,15 +1,20 @@
 extends ./layout/layout
 
 block contents
-    header 
-        h1 Zoom Zoom Zoom
     main
         div#userInfo
-            ion-icon(name="person-circle-outline" style={ 'font-size': '64px'})
-            form#nicknameForm
-                input(type="text", placeholder="Your Nickname", required)
-                button
-                    ion-icon(name="settings-outline" style={ 'font-size': '20px'})
+            div
+                section#userInfo__title
+                    span ZZz 👀
+                section#userInfo__text
+                    ion-icon(name="chatbubbles-outline")
+                    h1 줌 클론 라이브 챗
+                    h2 지금 라이브 챗에 참여하세요.
+                section#userInfo__form
+                    form#nicknameForm
+                        input(type="text", placeholder="사용할 닉네임 입력하기", required)
+                        button
+                            ion-icon(name="enter-outline")
         div#welcome
             section#makeRoom
                 ion-icon(name="person-circle-outline" style={ 'font-size': '30px'})

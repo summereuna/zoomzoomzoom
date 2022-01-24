@@ -94,6 +94,9 @@ async function getMedia(deviceId) {
     if (!deviceId) {
       await getCameras();
     }
+    //미디어 연결 시 디폴트 버튼 아이콘
+    muteBtn.setAttribute("name", "mic-outline");
+    cameraBtn.setAttribute("name", "videocam-outline");
   } catch (err) {
     console.log(err);
   }
@@ -187,7 +190,7 @@ async function handleWelcomeSubmit(event) {
 
 welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 
-//미이더 스트림 중단
+//미디어 스트림 중단
 function stopMediaStream(myStream) {
   myStream.getTracks().forEach(function (track) {
     if (track.readyState == "live") {

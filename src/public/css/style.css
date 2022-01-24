@@ -6,6 +6,15 @@ body {
   color: #2e363e;
   height: 100%;
   background-color: #eff3f4;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+footer {
+  flex: 1;
 }
 
 main {
@@ -13,27 +22,75 @@ main {
   display: flex;
 }
 
-input,
 button {
   border: none;
   background-color: transparent;
 }
 
 input {
-  border-bottom: 1px solid #2e363e;
+  padding: 5px 10px;
+  width: 75%;
   background-color: white;
-  border-radius: 20px;
   height: 25px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+input:focus {
+  border-color: #b721ff;
 }
 
 /* User Info */
 #userInfo {
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  color: black;
+  margin: 25px;
 }
 
-#userInfo ion-icon {
+#userInfo div {
+  border-radius: 20px;
+  box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.2);
+  flex-direction: column;
+  background-color: rgb(255, 255, 255);
+}
+
+#userInfo__title {
+  padding: 20px;
+  font-size: 30px;
+}
+#userInfo__text {
+  height: 350px;
+  padding: 50px;
+  background-image: linear-gradient(-20deg, #b721ff 0%, #21d4fd 100%);
+  color: white;
+  font-size: 50px;
+}
+#userInfo__text h1 {
+  font-size: 35px;
+  font-weight: 600;
+}
+#userInfo__text h2 {
+  margin-top: 30px;
+  font-size: 20px;
+}
+
+#userInfo__form {
+  padding: 20px;
+}
+
+#userInfo__form ion-icon {
+  font-size: 30px;
+  transition: color 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+#userInfo__form ion-icon:hover {
+  color: #b721ff;
+}
+
+#nicknameForm {
+  display: flex;
+  justify-content: space-between;
 }
 
 /* main */
