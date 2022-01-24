@@ -187,12 +187,23 @@ async function handleWelcomeSubmit(event) {
 
 welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 
+//미이더 스트림 중단
+function stopMediaStream(myStream) {
+  myStream.getTracks().forEach(function (track) {
+    if (track.readyState == "live") {
+      track.stop();
+    }
+  });
+}
+
 function clearRoom() {
   room.hidden = true;
   const ul = roomChat.querySelector("ul");
   while (ul.hasChildNodes()) {
     ul.removeChild(ul.firstChild);
   }
+  //방 나가면 비디오 스트림 더 이상 안되게하기
+  stopMediaStream(myStream);
   welcome.hidden = false;
 }
 

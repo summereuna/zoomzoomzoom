@@ -11,12 +11,13 @@ block contents
                 button
                     ion-icon(name="settings-outline" style={ 'font-size': '20px'})
         div#welcome
-            ion-icon(name="person-circle-outline" style={ 'font-size': '30px'})
-            h4#nickname
-            ion-icon.createRoomBtn(name="add-circle-outline" style={ 'font-size': '30px'})
-            form
-                input(type="text", placeholder="Room Name", required)
-                button Start Live
+            section#makeRoom
+                ion-icon(name="person-circle-outline" style={ 'font-size': '30px'})
+                h4#nickname
+                ion-icon.createRoomBtn(name="add-circle-outline" style={ 'font-size': '30px'})
+                form
+                    input(type="text", placeholder="Room Name", required)
+                    button Start Live
             section#roomList
                 h1 Live
                 div.room
