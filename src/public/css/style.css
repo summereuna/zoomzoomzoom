@@ -18,8 +18,10 @@ footer {
 }
 
 main {
+  box-sizing: border-box;
   margin: 20px;
   display: flex;
+  width: 390px;
 }
 
 button {
@@ -27,10 +29,20 @@ button {
   background-color: transparent;
 }
 
+form ion-icon {
+  font-size: 30px;
+  transition: color 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+form ion-icon:hover {
+  color: #b721ff;
+}
+
 input {
   padding: 5px 10px;
   width: 75%;
-  background-color: white;
+  background-color: #ffff;
   height: 25px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 20px;
@@ -41,24 +53,55 @@ input:focus {
   border-color: #b721ff;
 }
 
-/* User Info */
-#userInfo {
-  color: black;
-  margin: 25px;
+/*입장 버튼*/
+.btnRound {
+  padding: 5px 10px;
+  color: #ffffff;
+  background-color: rgba(0, 0, 0, 0.2);
+  height: 25px;
+  border-radius: 20px;
+  transition: background-color, 0.3s ease-in-out;
+  cursor: pointer;
 }
 
-#userInfo div {
+.btnRound:hover {
+  background-color: #6ea0fe;
+}
+
+/* User Info */
+#userInfo,
+#welcome {
+  color: black;
+  margin: 25px;
+  width: 100%;
+}
+
+#userInfo div,
+#welcome div {
   border-radius: 20px;
   box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.2);
   flex-direction: column;
-  background-color: rgb(255, 255, 255);
+  background-color: #ffff;
 }
 
-#userInfo__title {
+#userInfo__title,
+#roomList__title {
   padding: 20px;
   font-size: 30px;
 }
-#userInfo__text {
+
+#roomList__title {
+  display: flex;
+  justify-content: space-between;
+}
+#roomList__title section {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+
+#userInfo__text,
+#roomList {
   height: 350px;
   padding: 50px;
   background-image: linear-gradient(-20deg, #b721ff 0%, #21d4fd 100%);
@@ -74,30 +117,71 @@ input:focus {
   font-size: 20px;
 }
 
-#userInfo__form {
+/*하단 모든 form input과 btn*/
+#userInfo__form,
+#makeRoom {
   padding: 20px;
 }
 
-#userInfo__form ion-icon {
-  font-size: 30px;
-  transition: color 0.3s ease-in-out;
-  cursor: pointer;
-}
-
-#userInfo__form ion-icon:hover {
-  color: #b721ff;
-}
-
-#nicknameForm {
+section form {
   display: flex;
   justify-content: space-between;
 }
+/**/
 
-/* main */
-
-#makeRoom {
+.roomBox {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 20px;
 }
 
 #roomList {
-  margin-left: 40%;
+  display: flex;
+  flex-direction: column;
+}
+#roomList div {
+  box-sizing: border-box;
+  color: black;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  font-size: 30px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+#roomList section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-evenly;
+}
+#roomList section:first-child {
+  width: 30%;
+  font-size: 50px;
+  color: #ffffff;
+}
+
+.iconBg {
+  margin-bottom: 0;
+  padding: 0;
+  width: 45px;
+  height: 45px;
+  background-image: linear-gradient(-20deg, #b721ff 0%, #21d4fd 100%);
+  border-radius: 50%;
+  position: relative;
+}
+
+.iconBgIcon {
+  font-size: 50px;
+  color: #ffffff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.roomBox__nickname,
+.roomBox__roomName {
+  font-size: 15px;
 }

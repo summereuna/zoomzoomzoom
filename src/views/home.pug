@@ -12,25 +12,38 @@ block contents
                     h2 지금 라이브 챗에 참여하세요.
                 section#userInfo__form
                     form#nicknameForm
-                        input(type="text", placeholder="사용할 닉네임 입력하기", required)
+                        input(type="text", placeholder="사용할 닉네임 입력하기", minlength=1, maxlength=10, required)
                         button
                             ion-icon(name="enter-outline")
         div#welcome
-            section#makeRoom
-                ion-icon(name="person-circle-outline" style={ 'font-size': '30px'})
-                h4#nickname
-                ion-icon.createRoomBtn(name="add-circle-outline" style={ 'font-size': '30px'})
-                form
-                    input(type="text", placeholder="Room Name", required)
-                    button Start Live
-            section#roomList
-                h1 Live
-                div.room
-                    div.roomInfo
-                        ion-icon(name="people-circle-outline" style={ 'font-size': '30px'})
-                    div.roomTitle
-                        h4 Room Title
-                        button.enterRoomBtn Enter
+            div
+                section#roomList__title
+                    span ZZz 👀
+                    section
+                        span#nickname
+                        ion-icon(name="person-circle-outline" style={ 'font-size': '30px'})
+                section#roomList
+                    div.roomBox
+                        section.roomBox__userInfo
+                            div.iconBg
+                                ion-icon.iconBgIcon(name="people-circle-outline")
+                        section
+                            span.roomBox__nickname summereuna
+                            span.roomBox__roomName 방 이름
+                            button.btnRound 입장하기
+                    div.roomBox
+                        section.roomBox__userInfo
+                            div.iconBg
+                                ion-icon.iconBgIcon(name="people-circle-outline")
+                        section
+                            span.roomBox__nickname summereuna
+                            span.roomBox__roomName 방 이름
+                            button.btnRound 입장하기
+                section#makeRoom
+                    form
+                        input(type="text", placeholder="새롭게 만들 방 이름 입력하기", required)
+                        button
+                            ion-icon(name="add-circle-outline")
         div#room
             div#call
                 ion-icon#leaveRoomBtn(name="close-outline" style={ 'font-size': '30px'})
