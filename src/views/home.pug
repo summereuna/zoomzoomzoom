@@ -2,63 +2,65 @@ extends ./layout/layout
 
 block contents
     main
-        div#userInfo
-            div
-                section#userInfo__title
+        div#welcome
+            div.container--bg
+                section.nav
                     span ZZz 👀
-                section#userInfo__text
+                section.main__welcome
                     ion-icon(name="chatbubbles-outline")
                     h1 줌 클론 라이브 챗
                     h2 지금 라이브 챗에 참여하세요.
-                section#userInfo__form
-                    form#nicknameForm
-                        input(type="text", placeholder="사용할 닉네임 입력하기", minlength=1, maxlength=10, required)
-                        button
+                section.formBox
+                    form.formBox__form
+                        input.formBox__form__input(type="text", placeholder="사용할 닉네임 입력하기", minlength=1, maxlength=10, required)
+                        button.formBox__form__btn
                             ion-icon(name="enter-outline")
-        div#welcome
-            div
-                section#roomList__title
+        div#watingRoom
+            div.container--bg
+                section.nav
                     span ZZz 👀
-                    section
+                    section.nav__user
                         span#nickname
                         ion-icon(name="person-circle-outline" style={ 'font-size': '30px'})
-                section#roomList
-                    div.roomBox
+                section.main__watingRoom
+                    div.main__watingRoom__rooms
+                        section.main__watingRoom__rooms--icon
+                            div.icon--background
+                                ion-icon.icon--bg(name="people-circle-outline")
+                        section.main__watingRoom__rooms--user
+                            span.roomBox__nickname summereuna
+                            span.roomBox__roomName 방 이름
+                            button.btn--round 입장하기
+                    div.main__watingRoom__rooms
                         section.roomBox__userInfo
-                            div.iconBg
-                                ion-icon.iconBgIcon(name="people-circle-outline")
+                            div.icon--background
+                                ion-icon.icon--bg(name="people-circle-outline")
                         section
                             span.roomBox__nickname summereuna
                             span.roomBox__roomName 방 이름
-                            button.btnRound 입장하기
-                    div.roomBox
-                        section.roomBox__userInfo
-                            div.iconBg
-                                ion-icon.iconBgIcon(name="people-circle-outline")
-                        section
-                            span.roomBox__nickname summereuna
-                            span.roomBox__roomName 방 이름
-                            button.btnRound 입장하기
-                section#makeRoom
-                    form
-                        input(type="text", placeholder="새롭게 만들 방 이름 입력하기", required)
-                        button
+                            button.btn--round 입장하기
+                section.formBox
+                    form.formBox__form
+                        input.formBox__form__input(type="text", placeholder="새롭게 만들 방 이름 입력하기", required)
+                        button.formBox__form__btn
                             ion-icon(name="add-circle-outline")
         div#room
-            div#call
-                ion-icon#leaveRoomBtn(name="close-outline" style={ 'font-size': '30px'})
-                div#myStream
-                    video#myFace(autoplay, playinlin, widht="250", height="400")
+            div.container--bg
+                div#call.nav
+                    select#cameras
                     ion-icon(name="mic-outline" style={ 'font-size': '30px'})#muteBtn
                     ion-icon(name="videocam-outline" style={ 'font-size': '30px'})#cameraBtn
-                    select#cameras
-                video#peerFace(autoplay, playinlin, widht="250", height="400")
-            div#roomChat
-                h3
-                ul
-                form
-                    input(type="text", placeholder="메세지 입력하기...", required)
-                    button(type="submit")
-                        ion-icon(name="paper-plane-outline" style={ 'font-size': '30px'})
-                    button#chatHeart(type="button")
-                        ion-icon(name="heart-outline" style={ 'font-size': '30px'})
+                    ion-icon#leaveRoomBtn(name="close-outline" style={ 'font-size': '30px'})
+                div.main__room__video
+                    video#myFace(autoplay, playsinline, widht="340", height="225")
+                    video#peerFace(autoplay, playsinline, widht="340", height="225")
+                div#roomChat.main__room__chat
+                    div#chatList
+                        ul
+                    section#chatForm.formBox.formBox--bg
+                        form.formBox__form
+                            input.formBox__form__input(type="text", placeholder="메세지 입력하기...", required)
+                            button.formBox__form__btn(type="submit")
+                                ion-icon(name="paper-plane-outline" style={ 'font-size': '30px'})
+                            button.formBox__form__btn#chatHeart(type="button")
+                                ion-icon(name="heart-outline" style={ 'font-size': '30px'})
