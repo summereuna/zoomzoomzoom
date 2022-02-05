@@ -14,7 +14,7 @@ block contents
                     form.formBox__form
                         input.formBox__form__input(type="text", placeholder="사용할 닉네임 입력하기", minlength=1, maxlength=10, required)
                         button.formBox__form__btn
-                            ion-icon(name="enter-outline")
+                            ion-icon(name="add-circle-outline")
         div#watingRoom
             div.container--bg
                 section.nav
@@ -29,21 +29,21 @@ block contents
                                 ion-icon.icon--bg(name="people-circle-outline")
                         section.main__watingRoom__rooms--user
                             span.roomBox__nickname summereuna
-                            span.roomBox__roomName 방 이름
+                            span.roomBox__roomName 방 제목
                             button.btn--round 입장하기
                     div.main__watingRoom__rooms
-                        section.roomBox__userInfo
+                        section.main__watingRoom__rooms--icon
                             div.icon--background
                                 ion-icon.icon--bg(name="people-circle-outline")
-                        section
+                        section.main__watingRoom__rooms--user
                             span.roomBox__nickname summereuna
-                            span.roomBox__roomName 방 이름
+                            span.roomBox__roomName 방 제목
                             button.btn--round 입장하기
                 section.formBox
                     form.formBox__form
-                        input.formBox__form__input(type="text", placeholder="새롭게 만들 방 이름 입력하기", required)
+                        input.formBox__form__input(type="text", placeholder="새롭게 만들 방 제목 입력하기", required)
                         button.formBox__form__btn
-                            ion-icon(name="add-circle-outline")
+                            ion-icon(name="enter-outline")
         div#room
             div.container--bg
                 div#call.nav
@@ -51,16 +51,17 @@ block contents
                     ion-icon(name="mic-outline" style={ 'font-size': '30px'})#muteBtn
                     ion-icon(name="videocam-outline" style={ 'font-size': '30px'})#cameraBtn
                     ion-icon#leaveRoomBtn(name="close-outline" style={ 'font-size': '30px'})
-                div.main__room__video
-                    video#myFace(autoplay, playsinline, widht="340", height="225")
-                    video#peerFace(autoplay, playsinline, widht="340", height="225")
-                div#roomChat.main__room__chat
-                    div#chatList
-                        ul
-                    section#chatForm.formBox.formBox--bg
-                        form.formBox__form
-                            input.formBox__form__input(type="text", placeholder="메세지 입력하기...", required)
-                            button.formBox__form__btn(type="submit")
-                                ion-icon(name="paper-plane-outline" style={ 'font-size': '30px'})
-                            button.formBox__form__btn#chatHeart(type="button")
-                                ion-icon(name="heart-outline" style={ 'font-size': '30px'})
+                div.container--video
+                    div.main__room__video
+                        video#myFace(autoplay, playsinline)
+                        video#peerFace(autoplay, playsinline)
+                    div#roomChat.main__room__chat
+                        div#chatList.main__room__chat__chatList
+                            ul
+                        section#chatForm.main__room__chat__chatForm.formBox
+                            form.formBox__form
+                                input.formBox__form__input.formBox__form__input--w(type="text", placeholder="메세지 입력하기...", required)
+                                button.formBox__form__btn.btn--w(type="submit")
+                                    ion-icon(name="paper-plane-outline" style={ 'font-size': '30px'})
+                                button.formBox__form__btn.btn--w#chatHeart(type="button")
+                                    ion-icon(name="heart-outline" style={ 'font-size': '30px'})

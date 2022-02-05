@@ -1,26 +1,28 @@
 const socket = io();
 
 // 닉네임
-const userInfo = document.getElementById("userInfo");
-const nicknameForm = userInfo.querySelector("form");
-const nickname = document.getElementById("nickname");
-// 대기 장소, 룸 들어가기
 const welcome = document.getElementById("welcome");
-const welcomeForm = welcome.querySelector("form");
+const nicknameForm = welcome.querySelector("form");
+const nickname = document.getElementById("nickname");
+// 대기 장소
+const watingRoom = document.getElementById("watingRoom");
+const makeRoomForm = watingRoom.querySelector("form");
 // room
 const room = document.getElementById("room");
 // Video Call Code
 const call = document.getElementById("call");
-const myFace = document.getElementById("myFace");
+const camerasSelect = document.getElementById("cameras");
 const muteBtn = document.getElementById("muteBtn");
 const cameraBtn = document.getElementById("cameraBtn");
-const camerasSelect = document.getElementById("cameras");
 const leaveRoomBtn = document.getElementById("leaveRoomBtn");
+//내 얼굴
+const myFace = document.getElementById("myFace");
 // 채팅
 const roomChat = document.getElementById("roomChat");
 const roomChatForm = roomChat.querySelector("form");
+const chatList = document.getElementById("chatList");
 
-welcome.hidden = true;
+watingRoom.hidden = true;
 room.hidden = true;
 
 // 전역 변수
@@ -37,8 +39,8 @@ function handleNicknameSubmit(event) {
   const input = nicknameForm.querySelector("input");
   socket.emit("nickname", input.value);
   nickname.innerText = input.value;
-  userInfo.hidden = true;
-  welcome.hidden = false;
+  welcome.hidden = true;
+  watingRoom.hidden = false;
 }
 
 nicknameForm.addEventListener("submit", handleNicknameSubmit);
@@ -167,7 +169,7 @@ camerasSelect.addEventListener("iput", handleCameraChange);
 //🔥 1. 양쪽 브라우저에서 돌아가는 코드는 바로 이 부분!!
 //양쪽 브라우저에서 방에 참가하면, 방이 비어있든 말든 상관 없이 이 코드 실행함
 async function initCall() {
-  welcome.hidden = true;
+  watingRoom.hidden = true;
   room.hidden = false;
   //그러고 나서 getMedia 호출해서 카메라/마이크 등 불러오기
   await getMedia();
@@ -178,7 +180,7 @@ async function initCall() {
 //사용자가 입력한 roomName 서버에 넘겨주고, 서버에서 룸에 입장시킴
 async function handleWelcomeSubmit(event) {
   event.preventDefault();
-  const input = welcomeForm.querySelector("input");
+  const input = makeRoomForm.querySelector("input");
   await initCall();
   // 소켓 아이오에 사용자가 적은 payload가 방 이름으로 방 입장하게 하기
   socket.emit("join_room", input.value);
@@ -188,7 +190,7 @@ async function handleWelcomeSubmit(event) {
   input.value = "";
 }
 
-welcomeForm.addEventListener("submit", handleWelcomeSubmit);
+makeRoomForm.addEventListener("submit", handleWelcomeSubmit);
 
 //미디어 스트림 중단
 function stopMediaStream(myStream) {
@@ -196,6 +198,8 @@ function stopMediaStream(myStream) {
     if (track.readyState == "live") {
       track.stop();
     }
+    //myPeerConnection.removeTrack(sender);
+    //myPeerConnection.close();
   });
 }
 
@@ -207,7 +211,7 @@ function clearRoom() {
   }
   //방 나가면 비디오 스트림 더 이상 안되게하기
   stopMediaStream(myStream);
-  welcome.hidden = false;
+  watingRoom.hidden = false;
 }
 
 function handleLeaveRoom(event) {
@@ -352,6 +356,13 @@ function handleAddStream(data) {
 }
 
 // chat
+//채팅 치면 자동으로 스크롤 밑으로 이동되게하기 > li 생성될때 실행되게하기
+function chatScroll() {
+  items = chatList.querySelectorAll("li");
+  last = items[items.length - 1];
+  last.scrollIntoView();
+}
+
 const sendHeart = document.getElementById("chatHeart");
 
 function handleMessageSubmit(event) {
@@ -375,10 +386,11 @@ function handleMessageSubmit(event) {
 }
 
 function addMessage(msg) {
-  const ul = roomChat.querySelector("ul");
+  const ul = chatList.querySelector("ul");
   const li = document.createElement("li");
   li.innerText = msg;
   ul.appendChild(li);
+  chatScroll();
 }
 
 roomChatForm.addEventListener("submit", handleMessageSubmit);

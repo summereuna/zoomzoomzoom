@@ -1,5 +1,9 @@
 @import "reset.css";
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -19,9 +23,8 @@ footer {
 
 main {
   box-sizing: border-box;
-  margin: 20px;
+  margin: 45px;
   display: flex;
-  width: 390px;
 }
 
 button {
@@ -29,32 +32,62 @@ button {
   background-color: transparent;
 }
 
-form ion-icon {
+.formBox__form__btn ion-icon {
   font-size: 30px;
   transition: color 0.3s ease-in-out;
   cursor: pointer;
 }
 
-form ion-icon:hover {
+.formBox__form__btn ion-icon:hover {
   color: #b721ff;
 }
 
-input {
+.btn--w ion-icon {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.btn--w ion-icon:hover {
+  color: white;
+}
+
+.formBox__form__input {
   padding: 5px 10px;
   width: 75%;
   background-color: #ffff;
-  height: 25px;
+  height: 30px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 20px;
   transition: border-color 0.3s ease-in-out;
 }
 
-input:focus {
+.formBox__form__input:focus {
   border-color: #b721ff;
 }
 
+.formBox__form__input--w {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.5);
+  transition: border-color 0.3s ease-in-out;
+  color: white;
+}
+.formBox__form__input--w::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+}
+.formBox__form__input--w:focus {
+  border-color: white;
+}
+
+/* 스크린 3개 마진 */
+#welcome,
+#watingRoom,
+#room {
+  color: black;
+  width: 100%;
+  width: 350px;
+}
+
 /*입장 버튼*/
-.btnRound {
+.btn--round {
   padding: 5px 10px;
   color: #ffffff;
   background-color: rgba(0, 0, 0, 0.2);
@@ -64,82 +97,70 @@ input:focus {
   cursor: pointer;
 }
 
-.btnRound:hover {
+.btn--round:hover {
   background-color: #6ea0fe;
 }
 
-/* User Info */
-#userInfo,
-#welcome {
-  color: black;
-  margin: 25px;
-  width: 100%;
-}
-
-#userInfo div,
-#welcome div {
+.container--bg {
   border-radius: 20px;
   box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.2);
   flex-direction: column;
   background-color: #ffff;
+  position: relative;
 }
 
-#userInfo__title,
-#roomList__title {
-  padding: 20px;
-  font-size: 30px;
-}
-
-#roomList__title {
-  display: flex;
-  justify-content: space-between;
-}
-#roomList__title section {
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-}
-
-#userInfo__text,
-#roomList {
-  height: 350px;
-  padding: 50px;
-  background-image: linear-gradient(-20deg, #b721ff 0%, #21d4fd 100%);
-  color: white;
-  font-size: 50px;
-}
-#userInfo__text h1 {
-  font-size: 35px;
-  font-weight: 600;
-}
-#userInfo__text h2 {
-  margin-top: 30px;
-  font-size: 20px;
-}
-
-/*하단 모든 form input과 btn*/
-#userInfo__form,
-#makeRoom {
-  padding: 20px;
-}
-
-section form {
-  display: flex;
-  justify-content: space-between;
-}
-/**/
-
-.roomBox {
+.container--sm {
+  border-radius: 20px;
   width: 100%;
   height: 100px;
   margin-bottom: 20px;
 }
 
-#roomList {
+.nav {
+  padding: 20px;
+  font-size: 30px;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
 }
-#roomList div {
+
+.nav__user {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.main__welcome,
+.main__watingRoom {
+  height: 450px;
+  padding: 50px;
+  background-image: linear-gradient(-20deg, #b721ff 0%, #21d4fd 100%);
+  color: white;
+  font-size: 50px;
+}
+
+.main__welcome h1 {
+  font-size: 35px;
+  font-weight: 600;
+}
+.main__welcome h2 {
+  margin-top: 30px;
+  font-size: 20px;
+}
+
+/*하단 모든 form input과 btn*/
+.formBox {
+  height: 70px;
+  padding: 17px 20px;
+  width: 100%;
+}
+
+.formBox__form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main__watingRoom__rooms {
   box-sizing: border-box;
   color: black;
   display: flex;
@@ -150,19 +171,20 @@ section form {
   background-color: rgba(255, 255, 255, 0.8);
 }
 
-#roomList section {
+.main__watingRoom__rooms section {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-evenly;
 }
-#roomList section:first-child {
+.main__watingRoom__rooms--icon {
   width: 30%;
   font-size: 50px;
   color: #ffffff;
 }
 
-.iconBg {
+/* 아이콘 모양 */
+.icon--background {
   margin-bottom: 0;
   padding: 0;
   width: 45px;
@@ -172,7 +194,7 @@ section form {
   position: relative;
 }
 
-.iconBgIcon {
+.icon--bg {
   font-size: 50px;
   color: #ffffff;
   position: absolute;
@@ -184,4 +206,50 @@ section form {
 .roomBox__nickname,
 .roomBox__roomName {
   font-size: 15px;
+}
+
+/* room 스크린*/
+.container--video {
+  height: 520px;
+}
+.main__room__video {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  overflow: hidden;
+}
+
+video {
+  width: 100%;
+  height: 260px;
+}
+
+.main__room__chat {
+  position: absolute;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
+  width: 100%;
+  height: 260px;
+  bottom: 0;
+  z-index: 1;
+  color: white;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.main__room__chat__chatList {
+  margin-top: 60px;
+  padding: 20px 20px 10px 20px;
+  height: 140px;
+  overflow: auto;
+  word-wrap: break-word;
+  text-shadow: 1px 0px 4px rgba(0, 0, 0, 0.5);
+}
+
+.main__room__chat__chatForm {
+  position: absolute;
+  bottom: 0;
 }
